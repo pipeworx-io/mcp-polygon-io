@@ -1,17 +1,31 @@
-# mcp-polygon-io
+# @pipeworx/polygon-io
 
-Polygon.io MCP.
+[Polygon.io](https://polygon.io) MCP — stock + options + crypto + forex data. Free tier (5 req/min, end-of-day).
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 673+ live data sources.
+## Auth
+
+- Platform: `PLATFORM_POLYGON_KEY`. BYO: `?_apiKey=…`.
 
 ## Tools
 
-| Tool | Description |
-|------|-------------|
-| `tickers` | Ticker search. |
-| `aggregates` | OHLC bars. |
-| `daily_open_close` | Daily O/H/L/C + after-hours. |
-| `news` | News. |
+- `tickers(search?, type?, market?, exchange?, active?, limit?, sort?, order?)` — ticker search
+- `ticker_details(ticker)` — ticker reference detail
+- `aggregates(ticker, multiplier, timespan, from, to, adjusted?, sort?, limit?)` — OHLC bars
+- `daily_open_close(ticker, date, adjusted?)` — daily O/H/L/C + after-hours
+- `previous_close(ticker, adjusted?)` — previous close
+- `grouped_daily(date, adjusted?)` — all tickers OHLC for a day
+- `news(ticker?, published_utc?, order?, limit?, sort?)` — Polygon news
+- `splits(ticker?, execution_date?, limit?)` — splits
+- `dividends(ticker?, ex_dividend_date?, limit?)` — dividends
+- `market_holidays()` — upcoming market holidays
+- `market_status()` — current market status
+- `exchanges(asset_class?, locale?)` — exchanges
+
+`timespan`: `minute`|`hour`|`day`|`week`|`month`|`quarter`|`year`.
+
+## Data source
+
+`https://api.polygon.io`
 
 ## Quick Start
 
@@ -27,7 +41,7 @@ Add to your MCP client (Claude Desktop, Cursor, Windsurf, etc.):
 }
 ```
 
-Or connect to the full Pipeworx gateway for access to all 673+ data sources:
+Or connect to the full Pipeworx gateway for access to all 1395+ data sources:
 
 ```json
 {
