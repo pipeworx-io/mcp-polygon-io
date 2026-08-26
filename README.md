@@ -1,8 +1,15 @@
 # @pipeworx/polygon-io
 
-[Polygon.io](https://polygon.io) MCP — stock + options + crypto + forex data. Free tier (5 req/min, end-of-day).
+[Massive](https://massive.com) (formerly Polygon.io) MCP — stock + options + crypto + forex data.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1394+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1476+ live data sources.
+
+Polygon.io rebranded to Massive in 2026: `polygon.io` 301s site-wide to `massive.com`
+(site, docs, dashboard). The API host did not move — `api.polygon.io` still serves, and
+`api.massive.com` is the same API under the new name.
+
+Free **Basic** plan: $0/mo, 5 API calls/minute, end-of-day data, 2 years of history
+(massive.com/pricing, checked 2026-08-21). Paid Stocks Starter is $29/mo.
 
 ## Auth
 
@@ -16,7 +23,7 @@ Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents 
 - `daily_open_close(ticker, date, adjusted?)` — daily O/H/L/C + after-hours
 - `previous_close(ticker, adjusted?)` — previous close
 - `grouped_daily(date, adjusted?)` — all tickers OHLC for a day
-- `news(ticker?, published_utc?, order?, limit?, sort?)` — Polygon news
+- `news(ticker?, published_utc?, order?, limit?, sort?)` — Massive market news
 - `splits(ticker?, execution_date?, limit?)` — splits
 - `dividends(ticker?, ex_dividend_date?, limit?)` — dividends
 - `market_holidays()` — upcoming market holidays
@@ -25,9 +32,11 @@ Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents 
 
 `timespan`: `minute`|`hour`|`day`|`week`|`month`|`quarter`|`year`.
 
-## Data source
+## Data sources
 
-`https://api.polygon.io`
+- API: `https://api.polygon.io` (legacy host, still live; `https://api.massive.com` is the same API)
+- Docs: <https://massive.com/docs>
+- Keys: <https://massive.com/dashboard/keys>
 
 ## Quick Start
 
@@ -43,7 +52,25 @@ Add to your MCP client (Claude Desktop, Cursor, Windsurf, etc.):
 }
 ```
 
-Or connect to the full Pipeworx gateway for access to all 1394+ data sources:
+### What this endpoint actually serves
+
+`tools/list` at `https://gateway.pipeworx.io/polygon-io/mcp` returns the tools in the table
+above **plus the shared Pipeworx meta-tools** — `ask_pipeworx`,
+`discover_tools`, `search_within`, `remember`/`recall` and the rest of the
+gateway-wide set. So the tool count you see is larger than this table: a
+single-pack endpoint currently lists roughly 30 shared tools alongside the
+pack's own. The connection's `initialize` response states its exact scope, and
+is the authoritative answer for a given day.
+
+This is deliberate, not multiplexing by accident. The meta-tools are what let a
+scoped connection answer a question this pack does not cover — via
+`ask_pipeworx`, which routes across the whole catalog — without you adding a
+second MCP server. There is currently no way to mount a pack endpoint without
+them; if the extra schemas cost you more context than the routing is worth,
+connect to the full gateway once rather than to several pack endpoints.
+
+Or connect to the full Pipeworx gateway to get every pack's tools listed
+directly, instead of just this one's:
 
 ```json
 {
@@ -55,9 +82,14 @@ Or connect to the full Pipeworx gateway for access to all 1394+ data sources:
 }
 ```
 
+Both URLs reach the same gateway and the same 1476+ data sources. The
+only difference is which pack's tools are listed **directly**; `ask_pipeworx`
+reaches all of them from either one.
+
 ## Using with ask_pipeworx
 
-Instead of calling tools directly, you can ask questions in plain English:
+Instead of calling tools directly, you can ask questions in plain English —
+this works on the pack endpoint above as well as on the full gateway:
 
 ```
 ask_pipeworx({ question: "your question about Polygon Io data" })
