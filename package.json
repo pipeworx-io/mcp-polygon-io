@@ -1,20 +1,32 @@
 {
   "name": "@pipeworx/mcp-polygon-io",
-  "version": "0.1.3",
-  "description": "Polygon.io MCP.",
+  "version": "0.1.4",
+  "description": "Massive (formerly Polygon.io) MCP.",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "bin": {
+    "mcp-polygon-io": "bin/cli.js"
+  },
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "polygon-io"],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pipeworx-io/mcp-polygon-io"
+    "url": "git+https://github.com/pipeworx-io/mcp-polygon-io.git"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "tsx": "^4.19.0"
+  },
   "devDependencies": {
-    "typescript": "^5.7.0"
+    "typescript": "^5.9.3",
+    "@cloudflare/workers-types": "^4.20260405.1"
+  },
+  "pipeworx": {
+    "sourceHash": "v1-3de3d9a2d66321816036b2d2a39e6cbabb00b05afa4dee4f4019b1087a7579d0",
+    "sourceCommit": "00c836ddeaecbdd581dcfb0fb1842efea104006e"
   }
 }
