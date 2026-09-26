@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-polygon-io",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Massive (formerly Polygon.io) MCP.",
   "type": "module",
   "main": "src/index.ts",
@@ -26,7 +26,7 @@
     "@cloudflare/workers-types": "^4.20260405.1"
   },
   "pipeworx": {
-    "sourceHash": "v1-3de3d9a2d66321816036b2d2a39e6cbabb00b05afa4dee4f4019b1087a7579d0",
-    "sourceCommit": "00c836ddeaecbdd581dcfb0fb1842efea104006e"
+    "sourceHash": "v1-bda839c0e2a13dbaa7a0f5166c253a789b8e6d155fee9fdc9d668edb09e15cb1",
+    "sourceCommit": "4d51421bd010ad9a322c2245b70b401604912eff"
   }
 }
