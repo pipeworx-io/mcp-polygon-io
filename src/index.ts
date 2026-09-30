@@ -758,7 +758,27 @@ async function callTool(name: string, args: Record<string, unknown>): Promise<un
     const p = params ?? new URLSearchParams();
     p.set('apiKey', apiKey);
     const res = await pwFetch(`${BASE}${path}?${p}`, { headers: { Accept: 'application/json', 'User-Agent': UA } });
-    if (res.status === 401 || res.status === 403) throw new Error('Massive: invalid API key.');
+    // 401 and 403 are OPPOSITE facts and this used to collapse them into
+    // "invalid API key". 401 means the credential was rejected. 403 means it
+    // was ACCEPTED and the plan does not cover what was asked -- on the free
+    // Basic plan that is overwhelmingly the ~2-year history window. Reporting
+    // the second as the first sent a working key to the platform-key ROTATE
+    // bucket, where it sat for three consecutive daily reports looking like a
+    // dead credential somebody needed to re-mint (2026-09-29). It read as
+    // intermittent, but it was deterministic: our own tool-examples pinned
+    // these calls to January 2024, so they aged out of the window and will
+    // fail identically every day from now on.
+    // Quote the upstream body in both cases -- Massive says which it is, and
+    // we were throwing that away.
+    // Deliberately NOT quoting the upstream body here: pnpm check:error-body-leak
+    // forbids it, because an upstream body can echo the apiKey we just sent.
+    // The status split alone carries the distinction that mattered.
+    if (res.status === 401) throw new Error('Massive: invalid API key (401) — the credential was rejected.');
+    if (res.status === 403) {
+      throw new Error(
+        'Massive: the API key is valid but this request is outside the plan (403). The free Basic plan covers roughly the last 2 years of history, so a date range older than that fails this way even though the key is fine.',
+      );
+    }
     if (res.status === 429) throw new Error('Massive: 429 rate limit (the free Basic plan allows 5 requests/minute).');
     if (!res.ok) throw await httpError(res, 'Massive');
     return res.json();
