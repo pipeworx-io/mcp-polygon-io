@@ -2,9 +2,9 @@
 
 [Massive](https://massive.com) (formerly Polygon.io) MCP — stock + options + crypto + forex data.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1684+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1819+ live data sources. This is an independent, unofficial integration — not affiliated with, endorsed by, or published by the upstream provider.
 
-Polygon.io rebranded to Massive in 2026: `polygon.io` 301s site-wide to `massive.com`
+Polygon.io rebranded to Massive on 2025-10-30: `polygon.io` 301s site-wide to `massive.com`
 (site, docs, dashboard). The API host did not move — `api.polygon.io` still serves, and
 `api.massive.com` is the same API under the new name.
 
@@ -82,7 +82,7 @@ directly, instead of just this one's:
 }
 ```
 
-Both URLs reach the same gateway and the same 1684+ data sources. The
+Both URLs reach the same gateway and the same 1819+ data sources. The
 only difference is which pack's tools are listed **directly**; `ask_pipeworx`
 reaches all of them from either one.
 

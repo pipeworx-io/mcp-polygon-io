@@ -683,7 +683,7 @@ async function pwFetch(url: string | URL, init?: RequestInit): Promise<Response>
   return fetchWithTimeout(url, init ?? {}, 'Massive');
 }
 
-// Polygon.io rebranded to Massive in 2026 — massive.com serves the site, docs
+// Polygon.io rebranded to Massive on 2025-10-30 — massive.com serves the site, docs
 // and dashboard, and polygon.io 301s there site-wide. The API host did NOT move:
 // api.polygon.io still serves (verified live 2026-08-21), and api.massive.com is
 // the same API behind the new name (identical response shape on an invalid key).
@@ -773,13 +773,31 @@ async function callTool(name: string, args: Record<string, unknown>): Promise<un
     // Deliberately NOT quoting the upstream body here: pnpm check:error-body-leak
     // forbids it, because an upstream body can echo the apiKey we just sent.
     // The status split alone carries the distinction that mattered.
-    if (res.status === 401) throw new Error('Massive: invalid API key (401) — the credential was rejected.');
+    //
+    // All three branches below now carry an EXPLICIT gateway routing token
+    // (shared/src/error-prefix.ts convention; workers/gateway/src/error-class.ts
+    // honours an explicit prefix before it ever reads prose) -- fleet #3222.
+    // Live reproduction (2026-10-17) found this message's own wording was
+    // undermining the 401/403 split one layer down: classifyToolError's
+    // generic throttle rule matches a BARE "403" or "429" ANYWHERE in a
+    // string, and this 403 sentence says "(403)" in a parenthetical, so it
+    // was being caught by that rule BEFORE classifyToolError ever reached the
+    // auth-required checks -- the whole sentence booked as `upstream_throttled`
+    // (a retryable rate limit) when it is actually `platform_plan_required` (a
+    // permanent plan boundary; see error-class.ts PLATFORM_PLAN_PATTERNS,
+    // which now has an entry for this exact wording). The explicit tokens make
+    // the routing immune to incidental digits in the prose.
+    if (res.status === 401) throw new Error('auth_required: Massive: invalid API key (401) — the credential was rejected.');
     if (res.status === 403) {
       throw new Error(
-        'Massive: the API key is valid but this request is outside the plan (403). The free Basic plan covers roughly the last 2 years of history, so a date range older than that fails this way even though the key is fine.',
+        'auth_required: Massive: the API key is valid but this request is outside the plan (403). The free Basic plan covers roughly the last 2 years of history, so a date range older than that fails this way even though the key is fine.',
       );
     }
-    if (res.status === 429) throw new Error('Massive: 429 rate limit (the free Basic plan allows 5 requests/minute).');
+    if (res.status === 429) {
+      throw new Error(
+        'upstream_throttled: Massive: 429 rate limit -- the free Basic plan allows 5 requests/minute, shared across every Pipeworx caller using this key, not a per-caller allowance. Retry after 60s, or bring your own key via _apiKey for a private limit.',
+      );
+    }
     if (!res.ok) throw await httpError(res, 'Massive');
     return res.json();
   };
