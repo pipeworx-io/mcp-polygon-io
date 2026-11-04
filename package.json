@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-polygon-io",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Massive (formerly Polygon.io) MCP.",
   "type": "module",
   "main": "lib/index.js",
@@ -27,7 +27,7 @@
     "mode": "gateway",
     "slug": "polygon-io",
     "gatewaySlug": "polygon-io",
-    "sourceHash": "v1-6c44e583ec7b4b83674605f289f28db393d63c11f02fd1e36c4c7f267e9150d2",
-    "sourceCommit": "6bae4cfa7b6a73bbe014dc8820a19c80c842b21e"
+    "sourceHash": "v1-292e4aa519191fedeb6dc4400b4e853bcbf84df4edf4f7bddbbc23ffd4017cc6",
+    "sourceCommit": "db27387ed3ef7ec4805d465f7964a7f65f937006"
   }
 }
